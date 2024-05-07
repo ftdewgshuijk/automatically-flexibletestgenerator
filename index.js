@@ -1,17 +1,12 @@
-function rotateRight(head, k) {
-  if (!head || k === 0) return head;
-  let length = 1;
-  let tail = head;
-  while (tail.next) {
-    length++;
-    tail = tail.next;
+function longestPalindromeSubseq(s) {
+  const n = s.length;
+  const dp = Array.from(Array(n), () => Array(n).fill(0));
+  for (let i = n - 1; i >= 0; i--) {
+    dp[i][i] = 1;
+    for (let j = i + 1; j < n; j++) {
+      if (s[i] === s[j]) dp[i][j] = dp[i + 1][j - 1] + 2;
+      else dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);
+    }
   }
-  k = k % length;
-  if (k === 0) return head;
-  let newTail = head;
-  for (let i = 1; i < length - k; i++) newTail = newTail.next;
-  const newHead = newTail.next;
-  newTail.next = null;
-  tail.next = head;
-  return newHead;
+  return dp[0][n - 1];
 }
