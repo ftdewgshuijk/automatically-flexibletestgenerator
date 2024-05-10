@@ -1,18 +1,34 @@
-function isValidSudoku(board) {
-  const rows = new Array(9).fill().map(() => new Array(9).fill(0));
-  const cols = new Array(9).fill().map(() => new Array(9).fill(0));
-  const boxes = new Array(9).fill().map(() => new Array(9).fill(0));
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      if (board[i][j] !== ".") {
-        const num = Number(board[i][j]) - 1;
-        const k = Math.floor(i / 3) * 3 + Math.floor(j / 3);
-        if (rows[i][num] || cols[j][num] || boxes[k][num]) return false;
-        rows[i][num] = 1;
-        cols[j][num] = 1;
-        boxes[k][num] = 1;
+function solveSudoku(board) {
+  solve(board);
+  function solve(board) {
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        if (board[i][j] === ".") {
+          for (let num = 1; num <= 9; num++) {
+            const numChar = num.toString();
+            if (isValid(board, i, j, numChar)) {
+              board[i][j] = numChar;
+              if (solve(board)) return true;
+              board[i][j] = ".";
+            }
+          }
+          return false;
+        }
       }
     }
+    return true;
   }
-  return true;
+  function isValid(board, row, col, num) {
+    const boxRow = Math.floor(row / 3) * 3;
+    const boxCol = Math.floor(col / 3) * 3;
+    for (let i = 0; i < 9; i++) {
+      if (
+        board[row][i] === num ||
+        board[i][col] === num ||
+        board[boxRow + Math.floor(i / 3)][boxCol + (i % 3)] === num
+      )
+        return false;
+    }
+    return true;
+  }
 }
